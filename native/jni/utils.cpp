@@ -50,16 +50,19 @@ bool mkdir_ensure(const char *path, int mode) {
 }
 
 int mkdirs(const char *path, int mode) {
-    char s[strlen(path) + 1];
+    size_t len = strlen(path) + 1;
+    char *s = (char *)malloc(len * sizeof(char));
+    if (!s) return -1;
     s[0] = path[0];
     int a = 1, b = 1;
-    while (a <= strlen(path)) {
+    while (a <= (int)strlen(path)) {
         if (path[a] != '/' || path[a - 1] != '/') {
             s[b] = path[a];
             b++;
         }
         a++;
     }
+    s[b] = '\0';
     char *ss = s;
     while (ss[0] == '/')
         ss++;
@@ -73,20 +76,29 @@ int mkdirs(const char *path, int mode) {
     }
     int ret = mkdir(s, mode);
     return ret;
+    free(s);
+    return 0;
 }
 
 char *dirname2(const char *path) {
-    char s[strlen(path) + 1];
-    char p[strlen(path) + 1];
+    size_t len = strlen(path) + 1;
+    char *s = (char *)malloc(len * sizeof(char));
+    char *p = (char *)malloc(len * sizeof(char));
+    if (!s || !p) {
+        if (s) free(s);
+        if (p) free(p);
+        return NULL;
+    }
     s[0] = path[0];
     int a = 1, b = 1;
-    while (a <= strlen(path)) {
+    while (a < (int)len) {
         if (path[a] != '/' || path[a - 1] != '/') {
             s[b] = path[a];
             b++;
         }
         a++;
     }
+    s[b] = '\0';
     char *ss = s;
     while (ss[0] == '/')
         ss++;
@@ -98,7 +110,8 @@ char *dirname2(const char *path) {
         ss[0] = '/';
         ss++;
     }
-    return strdup(p);
+    free(s);
+    return p;
 }
 
 int getmod(const char *file) {
