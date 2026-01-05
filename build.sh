@@ -6,7 +6,7 @@ build_mode="${1:-release}"
 
 cd "$(dirname "$0")"
 
-ANDROID_NDK_HOME=./android-ndk-r23b
+ANDROID_NDK_HOME=./android-ndk-r27d
 export PATH=${PATH}:${ANDROID_NDK_HOME}/toolchains/llvm/prebuilt/linux-x86_64/bin
 
 rm -rf out
@@ -30,7 +30,7 @@ EOF
     native/jni/main.cpp \
     native/jni/logging.cpp native/jni/utils.cpp native/jni/mountinfo.cpp \
     -static \
-    -std=c++17 \
+    -std=c++20 \
     -o "out/magisk-module/libs/${ARCH}/overlayfs_system"
     fi
 done
